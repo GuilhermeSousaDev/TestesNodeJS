@@ -1,0 +1,15 @@
+<h1>Lista de Posts: </h1>
+<hr>
+
+{{#each posts}}
+
+<form action="/deletar" method="POST">
+    <h1>{{dataValues.titulo}}</h1>
+    <p>{{dataValues.Conteudo}}</p>
+    <small>{{dataValues.createdAt}}</small>
+    <input type="hidden" name="id" value="{{dataValues.id}}">
+    <a href="/deletar"><button>Deletar</button></a>
+    <hr>
+</form>
+
+{{/each}}
