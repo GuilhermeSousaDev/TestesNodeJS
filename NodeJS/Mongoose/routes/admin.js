@@ -21,17 +21,28 @@ router.get("/categorias/add", (req,res) => {
 })
 
 router.post('/categorias/new', (req,res) => {
+    const erros = []
     const {nome} = req.body
     const {slug} = req.body
-    new Categoria({
-        nome: nome,
-        slug: slug
-    }).save().then(() => {
-        console.log("Categoria salva")
-        res.redirect('/')
-    }).catch(e => {
-        console.log(e)
-    })
+
+    if(nome.length <= 2 || slug.length <= 2) {
+        erros.push({text: "Nome muito pequeno"})
+        erros.push({text: "Slug muito pequeno"})
+    }
+    if(erros.length > 0) {
+        res.render("AdminHtml/addcategorias", {erros: erros})
+    }else {
+        new Categoria({
+            nome: nome,
+            slug: slug
+        }).save().then(() => {
+            req.flash("success","Categoria criada com sucesso")
+            res.redirect('/admin/categorias')
+        }).catch(e => {
+            req.flash("error","Erro ao salvar categoria")
+            res.redirect("/admin")
+        })
+    }
 })
 
 module.exports = router
