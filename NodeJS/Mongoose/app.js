@@ -8,7 +8,14 @@ const flash = require('connect-flash')
 const path = require('path')
 const AdminRoute = require('./routes/admin')
 
-//Config
+//config
+app.use('handlebars', handlebars({defaultLayout: 'main'}))
+app.engine('handlebars', handlebars());
+app.set('view engine','handlebars')
+
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
+
 app.use(session({
     secret: "nodejs",
     resave: true,
@@ -20,13 +27,6 @@ app.use((req,res,next) => {
     res.locals.error = req.flash("error")
     next()
 })
-
-app.use('handlebars', handlebars({defaultLayout: 'main'}))
-app.engine('handlebars', handlebars());
-app.set('view engine','handlebars')
-
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, 'public')))
 
