@@ -1,24 +1,25 @@
-const { log } = require('console')
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 require('../models/Categorias')
+require('../models/Postagem')
 const Categoria = mongoose.model("Categorias")
+const Postagem = mongoose.model("postagens")
 
 router.get('/categorias', (req,res) => {
     Categoria.find().sort({date: 'desc'}).lean().then(categorias => {
         res.render('AdminHtml/categorias', {categorias: categorias})
     }).catch(e => {
         req.flash("error", "Erro ao Listar as Cateorias")
-        console.log(e)
     }) 
 })
 
 router.get("/categorias/add", (req,res) => {
     res.render("AdminHtml/addcategorias")
 })
+
 router.get("/categorias/delete/:id", (req,res) => {
-    Categoria.deleteOne({_id: req.params.id}).then(() => {
+    Categoria.deleteOne({_id: req.params.id.toString()}).then(() => {
         req.flash("success", "Categoria Deletada com Sucesso")
         res.redirect('/admin/categorias')
     }).catch(() => {
@@ -41,8 +42,8 @@ router.post('/categorias/editar', (req,res) => {
         const erros = []
         const {nome} = req.body
         const {slug} = req.body
-        nome.length <= 2? erros.push({text: "Nome muito pequeno"}) : ''
-        slug.length <= 2? erros.push({text: "Slug muito pequeno"}) : '' 
+        nome.length < 2? erros.push({text: "Nome muito pequeno"}) : ''
+        slug.length < 2? erros.push({text: "Slug muito pequeno"}) : '' 
         nome === doc.nome? erros.push({text: "Nome igual ao antigo"}) : ''
         slug === doc.slug? erros.push({text: "Slug igual ao Antigo"}) : ''
         if(erros.length > 0) {
@@ -51,7 +52,6 @@ router.post('/categorias/editar', (req,res) => {
             Categoria.updateOne({_id: doc._id}, {nome: nome, slug: slug}).then(() => {
                 req.flash("success", "Editado com Sucesso")
                 res.redirect("/admin/categorias")
-                console.log(doc.nome)
             }).catch(e => {
                 console.log(e)
                 req.flash("error", "Erro ao Editar")
@@ -62,8 +62,7 @@ router.post('/categorias/editar', (req,res) => {
 })
 router.post('/categorias/new', (req,res) => {
     const erros = []
-    const {nome} = req.body
-    const {slug} = req.body
+    const {nome,slug} = req.body
 
     if(nome.length <= 2 || slug.length <= 2) {
         erros.push({text: "Nome muito pequeno"})
@@ -84,5 +83,70 @@ router.post('/categorias/new', (req,res) => {
         })
     }
 })
+//Postagens rotas
 
+router.get("/postagens", (req,res) => {
+    Postagem.find().populate("categoria").sort({data: "desc"}).lean().then((doc) => {
+        res.render("AdminHtml/postagens", {postagem: doc})
+    }).catch(() => {
+        req.flash("error", "Erro")
+    })
+})
+
+router.get("/postagens/add", (req,res) => {
+    Categoria.find().lean().then(doc => {
+        res.render("AdminHtml/addpostagens", {categoria: doc})
+    }).catch(e => {
+        req.flash("error", "Houve um erro ao carregar o formulário")
+        res.redirect("/admin/postagem")
+    })
+})
+
+router.post("/postagens/new", (req,res) => {
+    const { titulo, slug, descricao, conteudo, categoria } = req.body
+    const erros = []
+    if(categoria == "0") {
+        erros.push({text: "Categoria Inválida, crie uma categoria"})
+    }
+    if(erros.length > 0) {
+        res.render("AdminHtml/postagens", {erros: erros})
+    }else{
+        Postagem.create({
+            titulo: titulo,
+            slug: slug,
+            descricao: descricao,
+            conteudo: conteudo,
+            categoria: categoria
+        }).then(() => {
+            req.flash("success", "Postagem criada com Sucesso")
+            res.redirect("/admin/postagem")
+        }).catch(e => {
+            req.flash("error", "Erro ao criar postagem")
+            console.log(e)
+        })
+    }
+})
+
+router.get("/postagens/edit/:id", (req,res) => {
+    Postagem.findOne({_id: req.params.id}).lean().then((doc) => {
+        res.render("AdminHtml/editpostagens", {postagem: doc})
+    }).catch(() => {
+        req.flash("error", "Erro ao Procurar categoria")
+    })
+})
+router.post("/postagens/editar", (req,res) => {
+    const { titulo, slug, descricao, conteudo } = req.body
+    Postagem.updateOne({_id: req.body.id}, {
+        titulo: titulo,
+        slug: slug,
+        descricao: descricao,
+        conteudo: conteudo
+    }).then(() => {
+        req.flash("success", "Postagem editada com sucesso")
+        res.redirect("/admin/postagens")
+    }).catch(() => {
+        req.flash("error", "Erro ao editar categoria")
+        res.redirect("/admin/postagens")
+    })
+})
 module.exports = router
