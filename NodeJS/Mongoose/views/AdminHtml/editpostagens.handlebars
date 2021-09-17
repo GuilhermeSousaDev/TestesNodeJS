@@ -21,7 +21,16 @@
             <label for="descricao">Descrição</label>
             <input class="form-control mt-2" 
             type="text" name="descricao" placeholder="Descrição da postagem" value="{{postagem.descricao}}">
-            <textarea class="form-control mt-4" name="conteudo" placeholder="Conteudo da postagem">{{postagem.conteudo}}</textarea>
+            <label for="conteudo">Conteudo</label>
+            <textarea class="form-control" name="conteudo">{{postagem.conteudo}}</textarea>
+             <select name="categoria mt-4">
+                 {{#each categoria}}
+                    <option value="{{_id}}">{{nome}}</option>
+                    {{else}}
+                    <option value="0">Sem resultados</option>
+                {{/each}}
+             </select>
+            <br>
             <br>
             <button type="submit" class="btn btn-success">Editar Categoria</button>
         </form>

@@ -101,7 +101,6 @@ router.get("/postagens/add", (req,res) => {
         res.redirect("/admin/postagem")
     })
 })
-
 router.post("/postagens/new", (req,res) => {
     const { titulo, slug, descricao, conteudo, categoria } = req.body
     const erros = []
@@ -119,7 +118,7 @@ router.post("/postagens/new", (req,res) => {
             categoria: categoria
         }).then(() => {
             req.flash("success", "Postagem criada com Sucesso")
-            res.redirect("/admin/postagem")
+            res.redirect("/admin/postagens")
         }).catch(e => {
             req.flash("error", "Erro ao criar postagem")
             console.log(e)
@@ -128,24 +127,38 @@ router.post("/postagens/new", (req,res) => {
 })
 
 router.get("/postagens/edit/:id", (req,res) => {
-    Postagem.findOne({_id: req.params.id}).lean().then((doc) => {
-        res.render("AdminHtml/editpostagens", {postagem: doc})
+    Postagem.findOne({_id: req.params.id}).populate('categoria').lean().then((doc) => {
+        Categoria.find().lean().then((categoria) => {
+            res.render("AdminHtml/editpostagens", {postagem: doc, categoria: categoria})
+        })
     }).catch(() => {
-        req.flash("error", "Erro ao Procurar categoria")
+        req.flash("error", "Erro ao Procurar postagem")
     })
 })
 router.post("/postagens/editar", (req,res) => {
-    const { titulo, slug, descricao, conteudo } = req.body
+    const { titulo, slug, descricao, conteudo, categoria } = req.body
     Postagem.updateOne({_id: req.body.id}, {
         titulo: titulo,
         slug: slug,
         descricao: descricao,
-        conteudo: conteudo
+        conteudo: conteudo,
+        categoria: categoria
     }).then(() => {
         req.flash("success", "Postagem editada com sucesso")
         res.redirect("/admin/postagens")
     }).catch(() => {
         req.flash("error", "Erro ao editar categoria")
+        res.redirect("/admin/postagens")
+    })
+})
+
+router.get("/postagens/delete/:id", (req,res) => {
+    Postagem.deleteOne({_id: req.params.id.toString()}).then(() => {
+        req.flash("success", "Postagem Deletada com sucesso")
+        res.redirect("/admin/postagens")
+    }).catch(e => {
+        console.log(e)
+        req.flash("error", "Erro ao deletar")
         res.redirect("/admin/postagens")
     })
 })
