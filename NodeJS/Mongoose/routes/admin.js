@@ -69,12 +69,9 @@ router.post('/categorias/new', (req,res) => {
         erros.push({text: "Slug muito pequeno"})
     }
     if(erros.length > 0) {
-        res.render("AdminHtml/addcategorias", {erros: erros})
+        res.render("AdminHtml/addcategorias", {erros})
     }else {
-        Categoria.create({
-            nome: nome,
-            slug: slug
-        }).then(() => {
+        Categoria.create({ nome,slug }).then(() => {
             req.flash("success","Categoria criada com sucesso")
             res.redirect('/admin/categorias')
         }).catch(e => {
@@ -87,7 +84,7 @@ router.post('/categorias/new', (req,res) => {
 
 router.get("/postagens", (req,res) => {
     Postagem.find().populate("categoria").sort({data: "desc"}).lean().then((doc) => {
-        res.render("AdminHtml/postagens", {postagem: doc})
+        res.render("AdminHtml/postagens", {doc})
     }).catch(() => {
         req.flash("error", "Erro")
     })
@@ -95,7 +92,7 @@ router.get("/postagens", (req,res) => {
 
 router.get("/postagens/add", (req,res) => {
     Categoria.find().lean().then(doc => {
-        res.render("AdminHtml/addpostagens", {categoria: doc})
+        res.render("AdminHtml/addpostagens", {doc})
     }).catch(e => {
         req.flash("error", "Houve um erro ao carregar o formulário")
         res.redirect("/admin/postagem")
@@ -110,13 +107,7 @@ router.post("/postagens/new", (req,res) => {
     if(erros.length > 0) {
         res.render("AdminHtml/postagens", {erros: erros})
     }else{
-        Postagem.create({
-            titulo: titulo,
-            slug: slug,
-            descricao: descricao,
-            conteudo: conteudo,
-            categoria: categoria
-        }).then(() => {
+        Postagem.create({ titulo,slug,descricao,conteudo,categoria }).then(() => {
             req.flash("success", "Postagem criada com Sucesso")
             res.redirect("/admin/postagens")
         }).catch(e => {
@@ -129,7 +120,7 @@ router.post("/postagens/new", (req,res) => {
 router.get("/postagens/edit/:id", (req,res) => {
     Postagem.findOne({_id: req.params.id}).populate('categoria').lean().then((doc) => {
         Categoria.find().lean().then((categoria) => {
-            res.render("AdminHtml/editpostagens", {postagem: doc, categoria: categoria})
+            res.render("AdminHtml/editpostagens", {doc, categoria})
         })
     }).catch(() => {
         req.flash("error", "Erro ao Procurar postagem")

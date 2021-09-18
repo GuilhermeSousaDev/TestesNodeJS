@@ -7,8 +7,10 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const path = require('path')
 const AdminRoute = require('./routes/admin')
+require("./models/Postagem")
+const Postagem = mongoose.model("postagens")
 
-//config
+//Config
 app.use('handlebars', handlebars({defaultLayout: 'main'}))
 app.engine('handlebars', handlebars());
 app.set('view engine','handlebars')
@@ -40,8 +42,15 @@ mongoose.connect("mongodb://localhost/blogapp").then(() => {
 
 //Rotas
 app.get('/', (req,res) => {
-    res.send("Hello World")
+    Postagem.find().populate("categoria").sort({data: "desc"}).lean().then(docs => {
+        res.render("index", {docs})
+    }).catch(e => {
+        console.log(e)
+        res.redirect('/404')
+    })
 })
+app.get(() => res.send("Erro 404"))
+
 app.use('/admin', AdminRoute)
 
 

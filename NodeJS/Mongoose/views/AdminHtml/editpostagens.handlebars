@@ -5,26 +5,26 @@
 <div class="card">
     <div class="card-body">
         <form action="/admin/postagens/editar" method="POST">
-            <input type="hidden" name="id" value="{{postagem._id}}">
+            <input type="hidden" name="id" value="{{doc._id}}">
             <label for="Titulo">Titulo:</label>
             <input class="form-control" 
             type="text" 
             name="titulo" 
-            placeholder="{{postagem.titulo}}"
-            value="{{postagem.titulo}}">
+            placeholder="{{doc.titulo}}"
+            value="{{doc.titulo}}">
             <label for="slug">Slug</label>
             <input class="form-control" 
             type="text" 
             name="slug" 
             placeholder="Slug da postagem"
-            value="{{postagem.slug}}">
+            value="{{doc.slug}}">
             <label for="descricao">Descrição</label>
             <input class="form-control mt-2" 
-            type="text" name="descricao" placeholder="Descrição da postagem" value="{{postagem.descricao}}">
+            type="text" name="descricao" placeholder="Descrição da postagem" value="{{doc.descricao}}">
             <label for="conteudo">Conteudo</label>
-            <textarea class="form-control" name="conteudo">{{postagem.conteudo}}</textarea>
+            <textarea class="form-control" name="conteudo">{{doc.conteudo}}</textarea>
              <select name="categoria mt-4">
-                 {{#each categoria}}
+                 {{#each doc}}
                     <option value="{{_id}}">{{nome}}</option>
                     {{else}}
                     <option value="0">Sem resultados</option>

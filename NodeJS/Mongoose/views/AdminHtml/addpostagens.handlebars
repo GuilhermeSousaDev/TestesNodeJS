@@ -12,7 +12,7 @@
             <textarea class="form-control" name="conteudo" required></textarea>
             <label for="categoria">Categoria</label>
             <select class="mt-4" name="categoria">
-                {{#each categoria}}
+                {{#each doc}}
                 <option value="{{_id}}">{{nome}}</option>
                 {{else}}
                 <option value="0">Nenhuma Categoria Registrada</option>
