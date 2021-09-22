@@ -30,7 +30,7 @@ router.get("/categorias/delete/:id", (req,res) => {
 
 router.get("/categorias/edit/:id", (req,res) => {
     Categoria.findOne({_id: req.params.id}).lean().then(categoria => {
-        res.render("AdminHtml/editcategorias", {categoria: categoria})
+        res.render("AdminHtml/editcategorias", {categoria})
     }).catch(() => {
         req.flash("error", "Esta Categoria não existe")
         res.redirect("/admin/categorias")
@@ -118,8 +118,8 @@ router.post("/postagens/new", (req,res) => {
 })
 
 router.get("/postagens/edit/:id", (req,res) => {
-    Postagem.findOne({_id: req.params.id}).populate('categoria').lean().then((doc) => {
-        Categoria.find().lean().then((categoria) => {
+    Postagem.findOne({_id: req.params.id}).populate('categoria').lean().then(doc => {
+        Categoria.find().lean().then(categoria => {
             res.render("AdminHtml/editpostagens", {doc, categoria})
         })
     }).catch(() => {
