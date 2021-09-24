@@ -2,13 +2,15 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
+const passport = require('passport')
 require('../models/Usuario')
 const Usuario = mongoose.model('usuarios')
 
+router.get("/login", (req,res) => {
+    res.render("usuarios/login")
+})
 router.get("/registro", (req,res) => {
-    Usuario.find().lean().then(doc => {
-        res.render("usuarios/registro", { doc })
-    })
+    res.render("usuarios/registro")
 })
 router.post("/registro", (req,res) => {
     const erros = []
@@ -59,5 +61,12 @@ router.post("/registro", (req,res) => {
     }
 })
 
+router.post("/loginPost", (req, res, next) => {
+    passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/usuario/login",
+        failureFlash: true
+    })(req, res, next)
+})
 
 module.exports = router

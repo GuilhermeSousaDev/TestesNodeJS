@@ -1,37 +1,15 @@
-const express = require('express')
+const express = require('./config/customExpress')
 const app = express()
-const handlebars = require('express-handlebars')
-const bodyParser = require('body-parser')
+const passport = require("passport")
 const mongoose = require('mongoose')
-const session = require('express-session')
-const flash = require('connect-flash')
-const path = require('path')
 const AdminRoute = require('./routes/admin')
 const UsuarioRoute = require('./routes/usuario')
 require("./models/Postagem")
+require("./config/auth")(passport)
 const Postagem = mongoose.model("postagens")
 
 //Config
-app.use('handlebars', handlebars({defaultLayout: 'main'}))
-app.engine('handlebars', handlebars());
-app.set('view engine','handlebars')
 
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json())
-
-app.use(session({
-    secret: "nodejs",
-    resave: true,
-    saveUninitialized: true
-}))
-app.use(flash())
-app.use((req,res,next) => {
-    res.locals.success = req.flash("success")
-    res.locals.error = req.flash("error")
-    next()
-})
-
-app.use(express.static(path.join(__dirname, 'public')))
 
 //Mongoose Connect
 mongoose.Promise = global.Promise
