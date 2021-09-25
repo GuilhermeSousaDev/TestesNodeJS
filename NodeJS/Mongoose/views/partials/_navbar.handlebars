@@ -15,9 +15,18 @@
         <li class="nav-item">
           <a class="nav-link" href="/admin/postagens">Postagens</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/usuario/login">Login</a>
-        </li>
+        {{#if user}}
+          <li class="nav-item">
+            <a class="nav-link" href="/usuario/logout">Sair da Conta</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/usuario/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/usuario/registro">Registro</a>
+          </li>
+        {{/if}}
       </ul>
       <form class="d-flex">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">

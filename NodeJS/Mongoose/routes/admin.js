@@ -1,12 +1,13 @@
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
+const { isAdmin } = require('../helpers/isAdmin')
 require('../models/Categorias')
 require('../models/Postagem')
 const Categoria = mongoose.model("Categorias")
 const Postagem = mongoose.model("postagens")
 
-router.get('/categorias', (req,res) => {
+router.get('/categorias', isAdmin ,(req,res) => {
     Categoria.find().sort({date: 'desc'}).lean().then(categorias => {
         res.render('AdminHtml/categorias', {categorias: categorias})
     }).catch(e => {

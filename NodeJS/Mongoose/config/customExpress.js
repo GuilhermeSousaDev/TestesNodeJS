@@ -29,6 +29,7 @@ module.exports = () => {
         res.locals.success = req.flash("success")
         res.locals.error = req.flash("error")
         res.locals.err = req.flash("err")
+        res.locals.user = req.user || null
         next()
     })
 

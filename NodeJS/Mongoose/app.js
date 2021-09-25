@@ -8,16 +8,9 @@ require("./models/Postagem")
 require("./config/auth")(passport)
 const Postagem = mongoose.model("postagens")
 
-//Config
-
-
 //Mongoose Connect
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://localhost/blogapp").then(() => {
-    console.log("Conectado ao Mongo")
-}).catch(e => {
-    console.log("Erro" + e)
-})
+mongoose.connect("mongodb://localhost/blogapp")
 
 //Rotas
 app.get('/', (req,res) => {

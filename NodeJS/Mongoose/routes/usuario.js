@@ -9,6 +9,13 @@ const Usuario = mongoose.model('usuarios')
 router.get("/login", (req,res) => {
     res.render("usuarios/login")
 })
+router.post("/loginPost", (req, res, next) => {
+    passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/usuario/login",
+        failureFlash: true
+    })(req, res, next)
+})
 router.get("/registro", (req,res) => {
     res.render("usuarios/registro")
 })
@@ -60,13 +67,10 @@ router.post("/registro", (req,res) => {
         })
     }
 })
-
-router.post("/loginPost", (req, res, next) => {
-    passport.authenticate("local", {
-        successRedirect: "/",
-        failureRedirect: "/usuario/login",
-        failureFlash: true
-    })(req, res, next)
+router.get("/logout", (req,res) => {
+    req.logout()
+    req.flash("success", "Deslogado com sucesso")
+    res.redirect("/")
 })
 
 module.exports = router
